@@ -1,5 +1,19 @@
 
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,13 +30,14 @@ public class Home extends javax.swing.JFrame {
     /**
      * Creates new form Home
      */
-    public Home() {
+    public Home() throws IOException {
         initComponents();
+        
     }
     public int[] encrypt(String in){
         int[] ascii = new int[in.length()];
         for(int x = 0; x < in.length(); x++){
-            ascii[x] = (int)in.charAt(x);
+            ascii[x] = 2*((int)in.charAt(x))%255;
         }
         return ascii;
     }
@@ -30,7 +45,7 @@ public class Home extends javax.swing.JFrame {
         String msg = "";
         for(int x = 0; x < in.size(); x++){
             int num = in.get(x);
-            msg += Character.toString((char)num);
+            msg += Character.toString((char)(num/2));
         }
         return msg;
     }
@@ -50,6 +65,7 @@ public class Home extends javax.swing.JFrame {
         jTextArea2 = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 204, 204));
@@ -88,7 +104,8 @@ public class Home extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton2)
-                    .addComponent(jButton1))
+                    .addComponent(jButton1)
+                    .addComponent(jLabel1))
                 .addGap(231, 231, 231))
         );
         layout.setVerticalGroup(
@@ -101,22 +118,33 @@ public class Home extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addGap(31, 31, 31)
+                        .addComponent(jLabel1)))
                 .addContainerGap(186, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+       
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        String in = jTextArea1.getText();
-        int[] ascii = encrypt(in);
+        String path = jTextArea1.getText();
+        LoadMyFile file = null;
+        try {
+            file = new LoadMyFile(path);
+        } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String text = file.getString();
+        int[] ascii = encrypt(text);
         String build = "";
         for(int x = 0; x < ascii.length; x ++){
             build += ascii[x] + " ";
         }
         jTextArea2.setText(build);
+        jLabel1.setText("Done");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -136,6 +164,7 @@ public class Home extends javax.swing.JFrame {
         }
         String msg = decrypt(ascii);
         jTextArea2.setText(msg);
+        jLabel1.setText("Undone");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
@@ -168,7 +197,11 @@ public class Home extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Home().setVisible(true);
+                try {
+                    new Home().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -176,6 +209,7 @@ public class Home extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
