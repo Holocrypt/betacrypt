@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -34,20 +35,29 @@ public class Home extends javax.swing.JFrame {
         initComponents();
         
     }
-    public int[] encrypt(String in){
+    public String encrypt(String in){
         int[] ascii = new int[in.length()];
+        String encryptedMsg = "";
         for(int x = 0; x < in.length(); x++){
             ascii[x] = 2*((int)in.charAt(x))%255;
+            encryptedMsg += Character.toString((char)ascii[x]);
         }
-        return ascii;
+        return encryptedMsg;
     }
-    public String decrypt(ArrayList<Integer> in){
+    public String decrypt(String in){
         String msg = "";
-        for(int x = 0; x < in.size(); x++){
-            int num = in.get(x);
-            msg += Character.toString((char)(num/2));
+        int[] ascii = new int[in.length()];
+        for(int x = 0; x < in.length(); x++){
+            ascii[x] = ((int)in.charAt(x))/2;
+            msg += Character.toString((char)(ascii[x]));
         }
         return msg;
+    }
+    public void createNewFile(String path, String content) throws IOException {
+        File file = new File(path);
+        FileWriter writer = new FileWriter(file);
+        writer.write(content);
+        writer.close();
     }
 
     /**
@@ -131,6 +141,7 @@ public class Home extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String path = jTextArea1.getText();
+        String newPath = jTextArea2.getText();
         LoadMyFile file = null;
         try {
             file = new LoadMyFile(path);
@@ -138,32 +149,49 @@ public class Home extends javax.swing.JFrame {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
         String text = file.getString();
-        int[] ascii = encrypt(text);
-        String build = "";
-        for(int x = 0; x < ascii.length; x ++){
-            build += ascii[x] + " ";
+        String newMsg = encrypt(text);
+        try {
+            createNewFile(newPath, newMsg);
+        } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
-        jTextArea2.setText(build);
         jLabel1.setText("Done");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        String in = jTextArea1.getText();
+        String path = jTextArea1.getText();
+        LoadMyFile file = null;
+        try {
+            file = new LoadMyFile(path);
+        } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String text = file.getString();
+        String decMsg = decrypt(text);
+        try {
+            FileWriter writer = new FileWriter(file.getFile());
+            writer.write(decMsg);
+            writer.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        /*String in = jTextArea1.getText();
         ArrayList<Integer> ascii = new ArrayList<Integer>();
         int count = 0;
         String num = "";
         for(int x = 0; x < in.length(); x++){
-            if(in.substring(x, x+1).equals(" ")){
-                ascii.add(count, Integer.parseInt(num));
-                num = "";
-                count ++;
-            }else{
-                num += in.substring(x, x+1);
-            }
+        if(in.substring(x, x+1).equals(" ")){
+        ascii.add(count, Integer.parseInt(num));
+        num = "";
+        count ++;
+        }else{
+        num += in.substring(x, x+1);
+        }
         }
         String msg = decrypt(ascii);
-        jTextArea2.setText(msg);
+        jTextArea2.setText(msg);*/
         jLabel1.setText("Undone");
     }//GEN-LAST:event_jButton2ActionPerformed
 

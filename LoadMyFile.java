@@ -13,11 +13,12 @@ public class LoadMyFile {
     private ArrayList<String> lines = new ArrayList<String>();
     private String[] storedLines;
     private String line;
+    private File file;
     
     //Constructor
     public LoadMyFile(String fileLocation ) throws FileNotFoundException, IOException{
        
-        File file = new File(fileLocation);
+        file = new File(fileLocation);
         //Open file to be read.
         BufferedReader in = new BufferedReader( new FileReader(file));
         line = in.readLine();
@@ -56,5 +57,10 @@ public class LoadMyFile {
     //Returns text in file as a string
     public String getString () {
         return line;
+    }
+    
+    //Returns File object
+    public File getFile () {
+        return file;
     }
 }
