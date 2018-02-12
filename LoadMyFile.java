@@ -23,11 +23,10 @@ public class LoadMyFile {
         BufferedReader in = new BufferedReader( new FileReader(file));
         line = in.readLine();
         //Skip the first line which has labels of columns.
-        
         /*
         if (line != null) 
             line = in.readLine();
-        
+        */
         while(line != null){
             lines.add(line);
             line = in.readLine();
@@ -38,7 +37,6 @@ public class LoadMyFile {
             storedLines = new String[lines.size()];
             storedLines = lines.toArray(storedLines);
         }
-        */
     }
     //Get the lines returning an arrayList
     public ArrayList<String>  getLinesList(){

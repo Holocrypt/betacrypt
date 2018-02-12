@@ -35,29 +35,43 @@ public class Home extends javax.swing.JFrame {
         initComponents();
         
     }
-    public String encrypt(String in){
-        int[] ascii = new int[in.length()];
-        String encryptedMsg = "";
-        for(int x = 0; x < in.length(); x++){
-            ascii[x] = 2*((int)in.charAt(x))%255;
-            encryptedMsg += Character.toString((char)ascii[x]);
+    public String[] encrypt(String[] in){
+        int ascii = 0;
+        String[] encryptedMsg = new String[in.length];
+        for(int y = 0; y < in.length; y++){
+            String line = in[y];
+            String l = "";
+            for(int x = 0; x < line.length(); x++){
+                ascii = 2*((int)line.charAt(x))%255;
+                l += Character.toString((char)ascii);
+                encryptedMsg[y] = l;
+            }
         }
         return encryptedMsg;
     }
-    public String decrypt(String in){
-        String msg = "";
-        int[] ascii = new int[in.length()];
-        for(int x = 0; x < in.length(); x++){
-            ascii[x] = ((int)in.charAt(x))/2;
-            msg += Character.toString((char)(ascii[x]));
+    public String[] decrypt(String[] in){
+        String[] decryptedMsg = new String[in.length];
+        int ascii = 0;
+        for(int y = 0; y < in.length; y++){
+            String line = in[y];
+            String l = "";
+            for(int x = 0; x < line.length(); x++){
+                ascii = ((int)line.charAt(x))/2;
+                l += Character.toString((char)(ascii));
+                decryptedMsg[y] = l;
+            }
         }
-        return msg;
+        return decryptedMsg;
     }
-    public void createNewFile(String path, String content) throws IOException {
+    public void createNewFile(String path, String[] content) throws IOException {
         File file = new File(path);
         FileWriter writer = new FileWriter(file);
-        writer.write(content);
-        writer.close();
+        BufferedWriter out = new BufferedWriter(writer);
+        for(int x = 0; x < content.length; x++){
+            out.write(content[x]);
+            out.newLine();
+        }
+        out.close();
     }
 
     /**
@@ -148,8 +162,8 @@ public class Home extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String text = file.getString();
-        String newMsg = encrypt(text);
+        String[] text = file.getLinesArray();
+        String[] newMsg = encrypt(text);
         try {
             createNewFile(newPath, newMsg);
         } catch (IOException ex) {
@@ -167,31 +181,19 @@ public class Home extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String text = file.getString();
-        String decMsg = decrypt(text);
+        String[] text = file.getLinesArray();
+        String[] decMsg = decrypt(text);
         try {
             FileWriter writer = new FileWriter(file.getFile());
-            writer.write(decMsg);
-            writer.close();
+            BufferedWriter out = new BufferedWriter(writer);
+            for(int x = 0; x < decMsg.length; x ++){
+                out.write(decMsg[x]);
+                out.newLine();
+            }
+            out.close();
         } catch (IOException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        /*String in = jTextArea1.getText();
-        ArrayList<Integer> ascii = new ArrayList<Integer>();
-        int count = 0;
-        String num = "";
-        for(int x = 0; x < in.length(); x++){
-        if(in.substring(x, x+1).equals(" ")){
-        ascii.add(count, Integer.parseInt(num));
-        num = "";
-        count ++;
-        }else{
-        num += in.substring(x, x+1);
-        }
-        }
-        String msg = decrypt(ascii);
-        jTextArea2.setText(msg);*/
         jLabel1.setText("Undone");
     }//GEN-LAST:event_jButton2ActionPerformed
 
