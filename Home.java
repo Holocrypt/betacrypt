@@ -43,33 +43,54 @@ public class Home extends javax.swing.JFrame {
         }
         return ascii % (key.length());
     }
-    public String[] encrypt(String[] in, int newKey){
+    public String[] encrypt(String[] in, String key, int newKey){
         int ascii = 0;
-        String[] encryptedMsg = new String[in.length];
+        String[] encryptedMsg = new String[in.length + 1];
+        
+        String keys = "";
+        for(int x = 0; x < key.length(); x++){
+            ascii = ((int)key.charAt(x) - newKey)*2%255;
+            keys += Character.toString((char)ascii);
+        }
+        encryptedMsg[0] = keys;
+        
         for(int y = 0; y < in.length; y++){
             String line = in[y];
             String l = "";
             for(int x = 0; x < line.length(); x++){
-                ascii = newKey*((int)line.charAt(x));//%255;
+                ascii = ((int)line.charAt(x) - newKey)*2%255;
                 l += Character.toString((char)ascii);
-                encryptedMsg[y] = l;
             }
+            encryptedMsg[y + 1] = l;
         }
         return encryptedMsg;
     }
-    public String[] decrypt(String[] in, int newKey){
-        String[] decryptedMsg = new String[in.length];
+    public String[] decrypt(String[] in, String key, int newKey){
+        String[] decryptedMsg = new String[in.length - 1];
         int ascii = 0;
-        for(int y = 0; y < in.length; y++){
-            String line = in[y];
+        
+        String keys = "";
+        for(int x = 0; x < in[0].length(); x++){
+            ascii = (int)in[0].charAt(x)/2 + newKey;
+            keys += Character.toString((char)(ascii));
+        }
+
+        for(int y = 0; y < in.length - 1; y++){
+            String line = in[y + 1];
             String l = "";
             for(int x = 0; x < line.length(); x++){
-                ascii = ((int)line.charAt(x))/newKey;
+                ascii = (int)line.charAt(x)/2 + newKey;
                 l += Character.toString((char)(ascii));
-                decryptedMsg[y] = l;
             }
+            decryptedMsg[y] = l;
         }
-        return decryptedMsg;
+        
+        if(keys.equals(key)){
+            return decryptedMsg;
+        }else{
+            jLabel1.setText("Wrong key entered.");
+            return null;
+        }
     }
     public void createNewFile(String path, String[] content) throws IOException {
         File file = new File(path);
@@ -220,7 +241,7 @@ public class Home extends javax.swing.JFrame {
         }
         String[] text = file.getLinesArray();
         int newKey = keyTrans(key);
-        String[] newMsg = encrypt(text, newKey);
+        String[] newMsg = encrypt(text, key, newKey);
         try {
             createNewFile(newPath, newMsg);
         } catch (IOException ex) {
@@ -241,7 +262,7 @@ public class Home extends javax.swing.JFrame {
         }
         String[] text = file.getLinesArray();
         int newKey = keyTrans(key);
-        String[] decMsg = decrypt(text, newKey);
+        String[] decMsg = decrypt(text, key, newKey);
         try {
             FileWriter writer = new FileWriter(file.getFile());
             BufferedWriter out = new BufferedWriter(writer);
