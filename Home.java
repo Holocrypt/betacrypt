@@ -1,20 +1,8 @@
 
-import java.util.ArrayList;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -263,14 +251,27 @@ public class Home extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        int newKey = keyTrans(key);
+        
+        ReadBinaryFile binary;
+        try {
+            binary = new ReadBinaryFile(path, newPath, newKey);
+        } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        /*
         String[] text = file.getLinesArray();
         int newKey = keyTrans(key);
         String[] newMsg = encrypt(text, key, newKey);
         try {
-            createNewFile(newPath, newMsg);
+        createNewFile(newPath, newMsg);
         } catch (IOException ex) {
-            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
+
         /*Does not work yet
         File oldFile = file.getFile();
         FileOutputStream fos = null;
@@ -302,6 +303,17 @@ public class Home extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        int newKey = keyTrans(key);
+        
+        ReadBinaryFile binary;
+        try {
+            binary = new ReadBinaryFile(path, newKey);
+        } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        /*
         String[] text = file.getLinesArray();
         int newKey = keyTrans(key);
         String[] decMsg = decrypt(text, key, newKey);
@@ -316,6 +328,7 @@ public class Home extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
         jLabel1.setText("Decrypted");
     }//GEN-LAST:event_jButton2ActionPerformed
 
